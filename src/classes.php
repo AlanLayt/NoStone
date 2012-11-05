@@ -17,7 +17,7 @@
 	
 		public function connect() { 
 		
-			$this->pdo = new PDO("mysql:host=134.36.216.17;dbname=dixd2alayt", 'dixd2alayt', 'iota82'); 
+			$this->pdo = new PDO("mysql:host=127.0.0.1;dbname=nostone", 'nostone', 'nostone'); 
 			echo 'running';
 		
 		} 
@@ -59,6 +59,7 @@
 		$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username');
 		$st->execute(array(':username' => $this->uname));
 		
+	//	echo var_dump($st->fetchAll());
 		while ($user = $st->fetch()) {
 			$this->d = $user;
 			return true;
