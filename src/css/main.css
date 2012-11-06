@@ -1,0 +1,21 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+	font-family: "Segoe UI", Frutiger, "Frutiger Linotype";
+}
+
+
+
+
+
+
+.username {
+	text-transform:capitalize;
+}
+
+.firstname {
+}
+
+.lastname {
+}

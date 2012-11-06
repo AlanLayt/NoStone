@@ -1,30 +1,30 @@
 <?php
 include_once('classes.php');
-
 $app = new App();
 
-
-?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+?><!doctype html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Untitled Document</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>NoStone</title>
+	<link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
+
 <?php
 
 
-$app->user->displayAvatar('');
+$app->user->getAvatar('');
+$app->user->getUsername();
 
 
 
 
 
-echo '<pre>'.$GLOBALS['de'].'</pre>';
+echo '<pre style="position:fixed;bottom:0;left:0;right:0;height: 150px; background:rgba(0,0,0,0.3); margin: 0px;">'.$GLOBALS['de'].'</pre>';
 
 
-?>??
+?>
 
 </body>
 </html>

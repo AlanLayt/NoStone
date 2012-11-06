@@ -3,9 +3,6 @@
 	
 	class App {
 		
-		
-		
-		
 		public function __construct(){
 			$uname = 'alan';
 			$upass = 'test';
@@ -18,7 +15,7 @@
 		public function connect() { 
 		
 			$this->pdo = new PDO("mysql:host=127.0.0.1;dbname=nostone", 'nostone', 'nostone'); 
-			echo 'running';
+			//echo 'running';
 		
 		} 
 		
@@ -32,48 +29,69 @@
 	
 	class User { 
 	
-	  private static $instance; 
-	
-	  public function __construct($pdo,$uname,$pword) { 
-	  
-		$this->pdo = $pdo;
-		$this->uname = $uname;
-		$this->pword = $pword;
+		private static $instance; 
 		
-		echo $this->getDetails();
-		if($this->getDetails()){
-			debug('details loaded');
-			//debug(var_dump($this->d));
-		}
-	  
-	  
-	  } 
-	
-	  public function getInstance() { 
-	
-	
-	
-	  } 
-	
-	  public function getDetails() { 
-		$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username');
-		$st->execute(array(':username' => $this->uname));
+		public function __construct($pdo,$uname,$pword) { 
 		
-	//	echo var_dump($st->fetchAll());
-		while ($user = $st->fetch()) {
-			$this->d = $user;
-			return true;
-		}
+			$this->pdo = $pdo;
+			$this->uname = $uname;
+			$this->pword = $pword;
+			
+			//echo $this->getDetails();
+			
+			if($this->getDetails()){
+				debug('details loaded');
+				//debug(var_dump($this->d));
+			}
+			
+		
+		} 
+		
+		public function getInstance() { 
+		
+		
+		
+		} 
+		
+		public function getDetails() { 
+			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username');
+			$st->execute(array(':username' => $this->uname));
+			
+			//	echo var_dump($st->fetchAll());
+			while ($user = $st->fetch()) {
+				$this->d = $user;
+				return true;
+			}
+		
+		} 
+		
+		
+		
+		
+		
 	
-	  } 
-	
-		public function displayAvatar($class) { 
+		public function getAvatar($class) { 
 			$params = '';
 			if($class!='')
 				$params .= 'class="'.$class.'" ';
 			
 			
-			echo '<img '.$params.'src="avatar/'.$this->d['uid'].'.jpg">';
+			echo '<img '.$params.'src="avatar/'.$this->d['uid'].'.jpg" \>';
+		
+		} 
+	
+		public function getUsername() { 
+			echo '<span class="username">'.$this->d['uname'].'</span>';
+		
+		} 
+	
+		public function getFirstName() { 
+			echo '<span class="firstname">'.$this->d['first_name'].'</span>';
+		
+		}
+	
+		public function getLastName() { 
+			echo '<span class="lastname">'.$this->d['last_name'].'</span>';
 		
 		}  
 	
