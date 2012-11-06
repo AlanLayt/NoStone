@@ -6,6 +6,8 @@ $app = new App();
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>NoStone</title>
+    <script src="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>
+    <script src="js/main.js"></script>
 	<link rel="stylesheet" href="css/main.css">
 </head>
 
@@ -14,10 +16,15 @@ $app = new App();
 <?php
 
 
-$app->user->getAvatar('');
-$app->user->getUsername();
+echo '<div style="float:left;">' , $app->user->getAvatar('') , '</div>';
+echo '
+<div style="float:left;">
+	<div>' , $app->user->getFirstName() , ' ' , $app->user->getLastName() , '</div>
+	' , $app->user->getUsername() , '
+</div>';
 
 
+echo '<div style="float:right">' , $app->user->loginForm() , '</div>';
 
 
 

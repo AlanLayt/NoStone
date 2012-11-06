@@ -70,28 +70,39 @@
 		
 		
 	
+		public function loginForm() { 
+			return '
+			<form method="post">
+				<input name="username" type="text" placeholder="Username" \>
+				<input name="password" type="password" placeholder="Password" \>
+				<input type="submit" \>
+			</form>
+			';
+		
+		} 
+	
 		public function getAvatar($class) { 
 			$params = '';
 			if($class!='')
 				$params .= 'class="'.$class.'" ';
 			
 			
-			echo '<img '.$params.'src="avatar/'.$this->d['uid'].'.jpg" \>';
+			return '<img '.$params.'src="avatar/'.$this->d['uid'].'.jpg" \>';
 		
 		} 
 	
 		public function getUsername() { 
-			echo '<span class="username">'.$this->d['uname'].'</span>';
+			return '<span class="username">'.$this->d['uname'].'</span>';
 		
 		} 
 	
 		public function getFirstName() { 
-			echo '<span class="firstname">'.$this->d['first_name'].'</span>';
+			return '<span class="firstname">'.$this->d['first_name'].'</span>';
 		
 		}
 	
 		public function getLastName() { 
-			echo '<span class="lastname">'.$this->d['last_name'].'</span>';
+			return '<span class="lastname">'.$this->d['last_name'].'</span>';
 		
 		}  
 	
