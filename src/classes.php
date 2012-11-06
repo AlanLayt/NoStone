@@ -12,14 +12,6 @@
 			
 			//setcookie('username','alan');
 			
-			if(isset($_GET['act'])){
-				switch($_GET['act']){
-					case 'logout':
-						$this->logout();
-						break;
-				}
-			}
-			
 			if(isset($_POST['username']) && isset($_POST['password'])) {
 				debug('Login POST data detected: ' . $_POST['username']);
 				
@@ -41,31 +33,50 @@
 				else {
 					debug('Checking for cookies');
 					if(isset($_COOKIE['username']) && isset($_COOKIE['key'])) {
-						
+						//false != $sessionKey = $this->user->auth($_POST['username'],$_POST['password'])
 						debug('Login cookie detected: ' . $_COOKIE['username']);
 						if($this->user->authSession($_COOKIE['username'],$_COOKIE['key'])){
 							session_start();
 							$this->user->getDetails($_COOKIE['username']);
 							debug('User authenticated: ' . $this->user->d['uname']);
+							$this->authenticated();
 						}
-							
 					}
+					else
+						debug('No cookies found.');
+				}
+			}
+			
+			if(isset($_GET['act'])){
+				switch($_GET['act']){
+					case 'logout':
+						$this->logout();
+						break;
 				}
 			}
 		
 		} 
 	
+		public function authenticated() { 
+		
+			debug("Authenticated. Running.");
+		
+		}
+	
 		public function logout() { 
 		
-			unset($_SESSION['username']);
-			setcookie ('username', '', time() - 3600);
-			setcookie ('key', '', time() - 3600);
-			session_destroy();
+			if($this->user->isauthed()){
+				$this->user->deleteSession();
+				unset($_SESSION['username']);
+				setcookie ('username', '', time() - 3600);
+				setcookie ('key', '', time() - 3600);
+				session_destroy();
+				//header("Location: index.php");
+			}
 			
 			//$host  = $_SERVER['HTTP_HOST'];
 			//$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 			//$extra = 'mypage.php';
-			header("Location: index.php");
 		
 		} 
 	
@@ -107,8 +118,12 @@
 		
 		} 
 		
-		public function authed($is) { 
+		public function authed($is,$key) { 
 			$this->authed = $is;
+			$this->sessionKey = $key;
+		}
+		public function isauthed() { 
+			return $this->authed;
 		}
 		
 		public function auth($username,$password) { 
@@ -116,12 +131,11 @@
 			$st->execute(array(':username' => $username,':password' => sha1($this->pwSalt.$password)));
 			
 			debug('Searching for user: ' . $username);
-			//debug(sha1($this->pwSalt.$password));
 			while ($user = $st->fetch()) {
 				$this->setDetails($user);
-				$sessionKey = $this->createSession();
-				$this->authed(true);
-				return $sessionKey;
+				$key = $this->createSession();
+				$this->authed(true,$key);
+				return $this->sessionKey;
 			}
 			return false;
 		}
@@ -154,7 +168,23 @@
 			debug('Auth result: ' . $st->rowCount() );
 			
 			if($st->rowCount()!=0){
-				$this->authed(true);
+				$this->authed(true,$key);
+				return true;
+			}
+			else
+				return false;
+		}
+		public function deleteSession() { 
+			$st = $this->pdo->prepare('DELETE FROM session WHERE uid = :uid AND `key` = :key');
+			$st->execute(array(
+				':uid' => $this->d['uid'],
+				':key' => $this->sessionKey
+			));
+			debug('Removing session: ' . $this->d['uid'] . ': ' . $this->sessionKey );
+			debug('Removed?: ' . $st->rowCount() );
+			
+			if($st->rowCount()!=0){
+				$this->authed(false,'');
 				return true;
 			}
 			else
