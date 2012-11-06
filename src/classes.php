@@ -84,10 +84,40 @@
 			debug('Searching for user: ' . $username);
 			while ($user = $st->fetch()) {
 				$this->setDetails($user);
+				$this->createSession();
 				$this->authed = true;
 				return true;
 			}
 		}
+		
+		
+		// ==== SESSION HANDLERS ==== \\
+		public function createSession() { 
+			$st = $this->pdo->prepare('INSERT INTO session VALUES("", :uid, :ip, 1, :time)');
+			$st->execute(array(
+				':uid' => $this->d['uid'],
+				':ip' => $_SERVER['REMOTE_ADDR'],
+				':time' => time()
+			));
+			debug('Initiating session: ' . $st->rowCount());
+			if($st->rowCount()!=0)
+				return true;
+		}
+		public function authSession() { 
+			$st = $this->pdo->prepare('INSERT INTO session VALUES("", :uid, :ip, 1, :time)');
+			$st->execute(array(
+				':uid' => $this->d['uid'],
+				':ip' => $_SERVER['REMOTE_ADDR'],
+				':time' => time()
+			));
+			debug('Initiating session: ' . $st->rowCount());
+			if($st->rowCount()!=0)
+				return true;
+		}
+		
+		
+		
+		
 		
 		public function setDetails($user) { 
 				$this->d = $user;
