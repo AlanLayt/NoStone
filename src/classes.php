@@ -1,27 +1,27 @@
 <?php
 
 	class App {
+		private $root = 'http://127.0.0.1/Projects/git/NoStone/src/';
 		
 		public function __construct(){
 			$uname = 'alan';
 			$upass = '';
 		
 			$this->connect();
-			$this->user = new User($this->pdo);
+			$this->user = new User($this->pdo,$this->root);
 			
-			if(isset($_POST['username']) && isset($_POST['password'])) {
-				debug('Login POST data detected: ' . $_POST['username']);
+			if(isset($_POST['loginUser']) && isset($_POST['loginPass'])) {
+				debug('Login POST data detected: ' . $_POST['loginUser']);
 				
-				if(false != $sessionKey = $this->user->auth($_POST['username'],$_POST['password'])){
+				if(false != $sessionKey = $this->user->auth($_POST['loginUser'],$_POST['loginPass'])){
 					debug("Session initiated! key: ".$sessionKey);
-					setcookie('username',$_POST['username']);
+					setcookie('username',$_POST['loginUser']);
 					setcookie('key',$sessionKey);
-					header("Location: index.php");
+					header("Location: ".$this->root);
 				}
 				else {
 					debug('Invalid username or password.');
 				}
-				
 			}
 			else {
 				if(isset($_SESSION['username'])) {
@@ -49,6 +49,9 @@
 					case 'logout':
 						$this->logout();
 						break;
+					case 'register':
+						$this->register();
+						break;
 				}
 			}
 		
@@ -68,11 +71,65 @@
 				setcookie ('username', '', time() - 3600);
 				setcookie ('key', '', time() - 3600);
 				session_destroy();
-				header("Location: index.php");
+				header("Location: ".$this->root);
 			}
-			
-		
 		} 
+		public function register() { 
+			$pwSalt = 'hogwaRts';
+		
+			if(
+				isset($_POST['username']) &&
+				isset($_POST['firstname']) &&
+				isset($_POST['lastname']) &&
+				isset($_POST['password']) &&
+				isset($_POST['password2']) &&
+				isset($_POST['email']) &&
+				isset($_POST['dob'])
+			){
+				$this->regData['uname'] = $_POST['username'];
+				$this->regData['firstname'] = $_POST['firstname'];
+				$this->regData['lastname'] = $_POST['lastname'];
+				$this->regData['pword'] = $_POST['password'];
+				$this->regData['pword2'] = $_POST['password2'];
+				$this->regData['email'] = $_POST['email'];
+				$this->regData['dob'] = $_POST['dob'];
+				
+				if(strlen($_POST['username'])<4)
+					echo "<p>Username too short.</p>";
+				elseif(strlen($_POST['password'])<4)
+					echo "<p>Password too short.</p>";
+				elseif($_POST['password'] != $_POST['password2'])
+					echo "<p>Passwords do not match.</p>";
+				else {
+					$st = $this->pdo->prepare('INSERT INTO login VALUES("", :uname, :password, :email, :first_name, :last_name, :dob)');
+					$st->execute(array(
+						':uname' => $this->regData['uname'],
+						':password' => sha1($pwSalt.$this->regData['pword']),
+						':email' => $this->regData['email'],
+						':first_name' => $this->regData['firstname'],
+						':last_name' => $this->regData['lastname'],
+						':dob' => $this->regData['dob'],
+					));
+				}
+			
+			}
+				
+			//echo $_POST['username'];
+			/*$st->execute(array(
+				':uname' => $token,
+				':password' => $token,
+				':email' => $token,
+				':first_name' => $token,
+				':last_name' => $token,
+				':dob' => $token,
+			));
+			debug('Initiating session: ' . $st->rowCount());
+			
+			if($st->rowCount()!=0)
+				return $token;
+			else
+				return false;*/
+		}
 	
 		public function connect() { 
 			$this->pdo = new PDO("mysql:host=127.0.0.1;dbname=nostone", 'nostone', 'nostone'); 
@@ -80,9 +137,35 @@
 	
 		public function loginForm() { 
 			return '
-			<form method="post">
-				<input name="username" type="text" placeholder="Username" \>
-				<input name="password" type="password" placeholder="Password" \>
+			<form method="post" action="'.$this->root.'?act=login">
+				<input name="loginUser" type="text" placeholder="Username" \>
+				<input name="loginPass" type="password" placeholder="Password" \>
+				<input type="submit" \>
+			</form>
+			';
+		
+		}
+	
+		public function registerForm() { 
+			return '
+			<form method="post" action="?act=register">
+				<input name="username" type="text" placeholder="Username" 
+						'.(isset($this->regData['uname'])?'value="'.$this->regData['uname'].'"':'').' \>
+						
+				<input name="firstname" type="text" placeholder="First Name" 
+						'.(isset($this->regData['firstname'])?'value="'.$this->regData['firstname'].'"':'').' \>
+				<input name="lastname" type="text" placeholder="Last Name" 
+						'.(isset($this->regData['lastname'])?'value="'.$this->regData['lastname'].'"':'').' \>
+						
+				<input name="password" type="password" placeholder="Password" 
+						'.(isset($this->regData['pword'])?'value="'.$this->regData['pword'].'"':'').' \>
+				<input name="password2" type="password" placeholder="Re-type password" 
+						'.(isset($this->regData['pword2'])?'value="'.$this->regData['pword2'].'"':'').' \>
+						
+				<input name="email" type="email" placeholder="email@example.com" 
+						'.(isset($this->regData['email'])?'value="'.$this->regData['email'].'"':'').' required \>
+  				<input name="dob" type="date" 
+						'.(isset($this->regData['dob'])?'value="'.$this->regData['dob'].'"':'').' required>
 				<input type="submit" \>
 			</form>
 			';
@@ -97,8 +180,9 @@
 		private $authed = false;
 		private $pwSalt = 'hogwaRts';
 		
-		public function __construct($pdo) { 
+		public function __construct($pdo,$root) { 
 			$this->pdo = $pdo;
+			$this->root = $root;
 		}  
 		
 		public function authed($is,$key) { 
@@ -205,7 +289,7 @@
 				$params .= 'class="'.$class.'" ';
 			
 			
-			return '<img '.$params.'src="avatar/'.$this->d['uid'].'.jpg" \>';
+			return '<img '.$params.'src="'.$this->root.'avatar/'.$this->d['uid'].'.jpg" \>';
 		
 		} 
 	

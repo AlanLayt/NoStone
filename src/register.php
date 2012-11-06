@@ -1,5 +1,4 @@
 <?php
-$root = 'http://127.0.0.1/Projects/git/NoStone/src/';
 include_once('classes.php');
 $app = new App();
 
@@ -9,10 +8,10 @@ $app = new App();
     <title>NoStone</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCidhJakWqVYzhILIHg1ug18KPHXfjkkcE&sensor=true" type="text/javascript"></script>
     <script src="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>
-	<script src="<?php echo $root; ?>js/Stamen.js" type="text/javascript"></script>
-    <script src="<?php echo $root; ?>js/main.js"></script>
+	<script src="js/Stamen.js" type="text/javascript"></script>
+    <script src="js/main.js"></script>
     
-	<link rel="stylesheet" href="<?php echo $root; ?>css/main.css">
+	<link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
@@ -26,7 +25,7 @@ $app = new App();
         echo '
         <div style="float:left;">
             <div>' , $app->user->getFirstName() , ' ' , $app->user->getLastName() , '</div>
-            (' , $app->user->getUsername() , ' <a class="logout" href="'.$root.'?act=logout">logout</a>)
+            (' , $app->user->getUsername() , ' <a class="logout" href="?act=logout">logout</a>)
         </div>';
         echo '';
     
@@ -40,14 +39,10 @@ $app = new App();
 		echo $app->registerForm();
 		
 		
-		//if (isset($_SERVER['REQUEST_URI'])) echo $_SERVER['REQUEST_URI'];
-		if (isset($_GET['id'])) echo $_GET['id'];
+		
 		
 
 echo '
-      	  <div id="map_canvas"></div>
-
-
 
 
 
