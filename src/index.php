@@ -15,18 +15,19 @@ $app = new App();
 
 <?php
 
+echo $app->user->loggedIn();
+if($app->user->loggedIn()){
 
-echo '<div style="float:left;">' , $app->user->getAvatar('') , '</div>';
-echo '
-<div style="float:left;">
-	<div>' , $app->user->getFirstName() , ' ' , $app->user->getLastName() , '</div>
-	' , $app->user->getUsername() , '
-</div>';
+	echo '<div style="float:left;">' , $app->user->getAvatar('') , '</div>';
+	echo '
+	<div style="float:left;">
+		<div>' , $app->user->getFirstName() , ' ' , $app->user->getLastName() , '</div>
+		' , $app->user->getUsername() , '
+	</div>';
 
-
-echo '<div style="float:right">' , $app->user->loginForm() , '</div>';
-
-
+}
+else
+	echo '<div style="float:right">' , $app->loginForm() , '</div>';
 
 echo '<pre style="position:fixed;bottom:0;left:0;right:0;height: 150px; background:rgba(0,0,0,0.3); margin: 0px;">'.$GLOBALS['de'].'</pre>';
 

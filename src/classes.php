@@ -5,10 +5,42 @@
 		
 		public function __construct(){
 			$uname = 'alan';
-			$upass = 'test';
+			$upass = '';
 		
 			$this->connect();
-			$this->user = new User($this->pdo,$uname,$upass);
+			$this->user = new User($this->pdo);
+			
+			setcookie('username','alan');
+			
+			if(isset($_POST['username']) && isset($_POST['password'])) {
+				debug('Login POST data detected: ' . $_POST['username']);
+				
+				$this->user->auth($_POST['username'],$_POST['password']);
+			}
+			else {
+				if(isset($_SESSION['username'])) {
+					debug('Login session detected: ' . $_SESSION['username']);
+				}
+				else {
+					debug('Checking for cookies');
+					if(isset($_COOKIE['username'])) {
+						//session_register("myusername");
+						session_start();
+						debug('Login cookie detected: ' . $_COOKIE['username']);
+					}
+					//$_SESSION['username'] = 'alan';
+				}
+			}
+			
+			//setcookie ('username', '', time() - 3600);
+		
+		} 
+	
+		public function logout() { 
+		
+			unset($_SESSION['username']);
+			setcookie ('username', '', time() - 3600);
+			session_destroy();
 		
 		} 
 	
@@ -18,57 +50,6 @@
 			//echo 'running';
 		
 		} 
-		
-		public function getDetails() { 
-		
-		
-		
-		} 
-	
-	} 
-	
-	class User { 
-	
-		private static $instance; 
-		
-		public function __construct($pdo,$uname,$pword) { 
-		
-			$this->pdo = $pdo;
-			$this->uname = $uname;
-			$this->pword = $pword;
-			
-			//echo $this->getDetails();
-			
-			if($this->getDetails()){
-				debug('details loaded');
-				//debug(var_dump($this->d));
-			}
-			
-		
-		} 
-		
-		public function getInstance() { 
-		
-		
-		
-		} 
-		
-		public function getDetails() { 
-			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username');
-			$st->execute(array(':username' => $this->uname));
-			
-			//	echo var_dump($st->fetchAll());
-			while ($user = $st->fetch()) {
-				$this->d = $user;
-				return true;
-			}
-		
-		} 
-		
-		
-		
-		
-		
 	
 		public function loginForm() { 
 			return '
@@ -80,6 +61,74 @@
 			';
 		
 		} 
+	
+	} 
+	
+	class User { 
+	
+		private static $instance; 
+		private $authed = false;
+		
+		public function __construct($pdo) { 
+		
+			$this->pdo = $pdo;
+			//$this->uname = $uname;
+			//$this->pword = $pword;
+			
+			//echo $this->getDetails();
+			
+			
+		
+		} 
+		
+		public function getInstance() { 
+		
+		
+		
+		} 
+		
+		public function auth($username,$password) { 
+			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username AND password = :password');
+			$st->execute(array(':username' => $username,':password' => $password));
+			
+			debug('Searching for user: ' . $username);
+			//	echo var_dump($st->fetchAll());
+			while ($user = $st->fetch()) {
+				//$this->d = $user;
+				$this->setDetails($user);
+				$this->authed = true;
+				//$this->d = $user;
+				/*if($this->getDetails()){
+					debug('details loaded');
+					//debug(var_dump($this->d));
+				}*/
+				return true;
+			}
+		}
+		
+		public function setDetails($user) { 
+				$this->d = $user;
+		} 
+		
+		public function loggedIn() { 
+			return $this->authed;
+		} 
+		
+		public function getDetails() { 
+			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username');
+			$st->execute(array(':username' => $this->uname));
+			
+			//	echo var_dump($st->fetchAll());
+			while ($user = $st->fetch()) {
+				$this->d = $user;
+				return true;
+			}
+		} 
+		
+		
+		
+		
+		
 	
 		public function getAvatar($class) { 
 			$params = '';
@@ -111,7 +160,7 @@
 	$GLOBALS['de'] = '';
 	function debug($t){	
 	
-		$GLOBALS['de'] .= $t;
+		$GLOBALS['de'] .= $t.'<br/>';
 		
 	}
 
