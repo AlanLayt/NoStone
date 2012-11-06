@@ -10,8 +10,6 @@
 			$this->connect();
 			$this->user = new User($this->pdo);
 			
-			//setcookie('username','alan');
-			
 			if(isset($_POST['username']) && isset($_POST['password'])) {
 				debug('Login POST data detected: ' . $_POST['username']);
 				
@@ -33,7 +31,7 @@
 				else {
 					debug('Checking for cookies');
 					if(isset($_COOKIE['username']) && isset($_COOKIE['key'])) {
-						//false != $sessionKey = $this->user->auth($_POST['username'],$_POST['password'])
+						
 						debug('Login cookie detected: ' . $_COOKIE['username']);
 						if($this->user->authSession($_COOKIE['username'],$_COOKIE['key'])){
 							session_start();
@@ -65,26 +63,20 @@
 	
 		public function logout() { 
 		
-			if($this->user->isauthed()){
+			if($this->user->loggedIn()){
 				$this->user->deleteSession();
 				unset($_SESSION['username']);
 				setcookie ('username', '', time() - 3600);
 				setcookie ('key', '', time() - 3600);
 				session_destroy();
-				//header("Location: index.php");
+				header("Location: index.php");
 			}
 			
-			//$host  = $_SERVER['HTTP_HOST'];
-			//$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-			//$extra = 'mypage.php';
 		
 		} 
 	
 		public function connect() { 
-		
 			$this->pdo = new PDO("mysql:host=127.0.0.1;dbname=nostone", 'nostone', 'nostone'); 
-			//echo 'running';
-		
 		} 
 	
 		public function loginForm() { 
@@ -107,24 +99,16 @@
 		private $pwSalt = 'hogwaRts';
 		
 		public function __construct($pdo) { 
-		
 			$this->pdo = $pdo;
-			
-		} 
-		
-		public function getInstance() { 
-		
-		
-		
-		} 
+		}  
 		
 		public function authed($is,$key) { 
 			$this->authed = $is;
 			$this->sessionKey = $key;
 		}
-		public function isauthed() { 
+		public function loggedIn() { 
 			return $this->authed;
-		}
+		} 
 		
 		public function auth($username,$password) { 
 			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username AND password = :password');
@@ -158,6 +142,7 @@
 			else
 				return false;
 		}
+		
 		public function authSession($uname,$key) { 
 			$st = $this->pdo->prepare('SELECT * FROM session, login WHERE login.uname = :uname AND session.key = :key AND session.uid = login.uid');
 			$st->execute(array(
@@ -174,6 +159,7 @@
 			else
 				return false;
 		}
+		
 		public function deleteSession() { 
 			$st = $this->pdo->prepare('DELETE FROM session WHERE uid = :uid AND `key` = :key');
 			$st->execute(array(
@@ -199,9 +185,9 @@
 				$this->d = $user;
 		} 
 		
-		public function loggedIn() { 
-			return $this->authed;
-		} 
+		
+		
+		
 		
 		
 		public function getDetails($uname) { 
@@ -214,11 +200,6 @@
 			}
 		} 
 		
-		
-		
-		
-		
-	
 		public function getAvatar($class) { 
 			$params = '';
 			if($class!='')
