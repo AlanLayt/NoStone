@@ -6,32 +6,38 @@ $app = new App();
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>NoStone</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCidhJakWqVYzhILIHg1ug18KPHXfjkkcE&sensor=true" type="text/javascript"></script>
     <script src="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>
+	<script src="js/Stamen.js" type="text/javascript"></script>
     <script src="js/main.js"></script>
+    
 	<link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
 
+
+<div id="header">
+	<?php
+    if($app->user->loggedIn()){
+    
+        echo '<div style="float:left;">' , $app->user->getAvatar('') , '</div>';
+        echo '
+        <div style="float:left;">
+            <div>' , $app->user->getFirstName() , ' ' , $app->user->getLastName() , '</div>
+            (' , $app->user->getUsername() , ' <a class="logout" href="?act=logout">logout</a>)
+        </div>';
+        echo '';
+    
+    }
+    else
+        echo '<div style="float:right">' , $app->loginForm() , '</div>';
+    ?>
+</div>
 <?php
 
-//echo $app->user->loggedIn();
-if($app->user->loggedIn()){
-
-	echo '<div style="float:left;">' , $app->user->getAvatar('') , '</div>';
-	echo '
-	<div style="float:left;">
-		<div>' , $app->user->getFirstName() , ' ' , $app->user->getLastName() , '</div>
-		(' , $app->user->getUsername() , ' <a class="logout" href="?act=logout">logout</a>)
-	</div>';
-	echo '';
-
-}
-else
-	echo '<div style="float:right">' , $app->loginForm() , '</div>';
-	
-
 echo '
+      	  <div id="map_canvas"></div>
 
 
 
