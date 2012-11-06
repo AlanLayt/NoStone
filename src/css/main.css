@@ -10,6 +10,11 @@ body {
 
 
 
+.logout {
+	font-size:12px;
+	text-decoration:none;
+}
+
 .username {
 	//text-transform:capitalize;
 	color:#999;

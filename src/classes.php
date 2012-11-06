@@ -10,12 +10,29 @@
 			$this->connect();
 			$this->user = new User($this->pdo);
 			
-			setcookie('username','alan');
+			//setcookie('username','alan');
+			
+			if(isset($_GET['act'])){
+				switch($_GET['act']){
+					case 'logout':
+						$this->logout();
+						break;
+				}
+			}
 			
 			if(isset($_POST['username']) && isset($_POST['password'])) {
 				debug('Login POST data detected: ' . $_POST['username']);
 				
-				$this->user->auth($_POST['username'],$_POST['password']);
+				if(false != $sessionKey = $this->user->auth($_POST['username'],$_POST['password'])){
+					debug("Session initiated! key: ".$sessionKey);
+					setcookie('username',$_POST['username']);
+					setcookie('key',$sessionKey);
+					header("Location: index.php");
+				}
+				else {
+					debug('Invalid username or password.');
+				}
+				
 			}
 			else {
 				if(isset($_SESSION['username'])) {
@@ -23,9 +40,15 @@
 				}
 				else {
 					debug('Checking for cookies');
-					if(isset($_COOKIE['username'])) {
-						session_start();
+					if(isset($_COOKIE['username']) && isset($_COOKIE['key'])) {
+						
 						debug('Login cookie detected: ' . $_COOKIE['username']);
+						if($this->user->authSession($_COOKIE['username'],$_COOKIE['key'])){
+							session_start();
+							$this->user->getDetails($_COOKIE['username']);
+							debug('User authenticated: ' . $this->user->d['uname']);
+						}
+							
 					}
 				}
 			}
@@ -36,7 +59,13 @@
 		
 			unset($_SESSION['username']);
 			setcookie ('username', '', time() - 3600);
+			setcookie ('key', '', time() - 3600);
 			session_destroy();
+			
+			//$host  = $_SERVER['HTTP_HOST'];
+			//$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+			//$extra = 'mypage.php';
+			header("Location: index.php");
 		
 		} 
 	
@@ -64,6 +93,7 @@
 	
 		private static $instance; 
 		private $authed = false;
+		private $pwSalt = 'hogwaRts';
 		
 		public function __construct($pdo) { 
 		
@@ -77,42 +107,58 @@
 		
 		} 
 		
+		public function authed($is) { 
+			$this->authed = $is;
+		}
+		
 		public function auth($username,$password) { 
 			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username AND password = :password');
-			$st->execute(array(':username' => $username,':password' => $password));
+			$st->execute(array(':username' => $username,':password' => sha1($this->pwSalt.$password)));
 			
 			debug('Searching for user: ' . $username);
+			//debug(sha1($this->pwSalt.$password));
 			while ($user = $st->fetch()) {
 				$this->setDetails($user);
-				$this->createSession();
-				$this->authed = true;
-				return true;
+				$sessionKey = $this->createSession();
+				$this->authed(true);
+				return $sessionKey;
 			}
+			return false;
 		}
 		
 		
 		// ==== SESSION HANDLERS ==== \\
 		public function createSession() { 
-			$st = $this->pdo->prepare('INSERT INTO session VALUES("", :uid, :ip, 1, :time)');
+			$token = sha1(uniqid(mt_rand(), true));
+			$st = $this->pdo->prepare('INSERT INTO session VALUES("", :key, :uid, :ip, 1, :time)');
 			$st->execute(array(
+				':key' => $token,
 				':uid' => $this->d['uid'],
 				':ip' => $_SERVER['REMOTE_ADDR'],
 				':time' => time()
 			));
 			debug('Initiating session: ' . $st->rowCount());
+			
 			if($st->rowCount()!=0)
-				return true;
+				return $token;
+			else
+				return false;
 		}
-		public function authSession() { 
-			$st = $this->pdo->prepare('INSERT INTO session VALUES("", :uid, :ip, 1, :time)');
+		public function authSession($uname,$key) { 
+			$st = $this->pdo->prepare('SELECT * FROM session, login WHERE login.uname = :uname AND session.key = :key AND session.uid = login.uid');
 			$st->execute(array(
-				':uid' => $this->d['uid'],
-				':ip' => $_SERVER['REMOTE_ADDR'],
-				':time' => time()
+				':uname' => $uname,
+				':key' => $key
 			));
-			debug('Initiating session: ' . $st->rowCount());
-			if($st->rowCount()!=0)
+			debug('Authenticating session: ' . $uname . ': ' . $key );
+			debug('Auth result: ' . $st->rowCount() );
+			
+			if($st->rowCount()!=0){
+				$this->authed(true);
 				return true;
+			}
+			else
+				return false;
 		}
 		
 		
@@ -128,10 +174,9 @@
 		} 
 		
 		
-		// ======== Not currently used
-		public function getDetails() { 
+		public function getDetails($uname) { 
 			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username');
-			$st->execute(array(':username' => $this->uname));
+			$st->execute(array(':username' => $uname));
 			
 			while ($user = $st->fetch()) {
 				$this->d = $user;
