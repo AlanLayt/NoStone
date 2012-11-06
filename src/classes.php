@@ -24,15 +24,11 @@
 				else {
 					debug('Checking for cookies');
 					if(isset($_COOKIE['username'])) {
-						//session_register("myusername");
 						session_start();
 						debug('Login cookie detected: ' . $_COOKIE['username']);
 					}
-					//$_SESSION['username'] = 'alan';
 				}
 			}
-			
-			//setcookie ('username', '', time() - 3600);
 		
 		} 
 	
@@ -72,13 +68,7 @@
 		public function __construct($pdo) { 
 		
 			$this->pdo = $pdo;
-			//$this->uname = $uname;
-			//$this->pword = $pword;
 			
-			//echo $this->getDetails();
-			
-			
-		
 		} 
 		
 		public function getInstance() { 
@@ -92,16 +82,9 @@
 			$st->execute(array(':username' => $username,':password' => $password));
 			
 			debug('Searching for user: ' . $username);
-			//	echo var_dump($st->fetchAll());
 			while ($user = $st->fetch()) {
-				//$this->d = $user;
 				$this->setDetails($user);
 				$this->authed = true;
-				//$this->d = $user;
-				/*if($this->getDetails()){
-					debug('details loaded');
-					//debug(var_dump($this->d));
-				}*/
 				return true;
 			}
 		}
@@ -114,11 +97,12 @@
 			return $this->authed;
 		} 
 		
+		
+		// ======== Not currently used
 		public function getDetails() { 
 			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username');
 			$st->execute(array(':username' => $this->uname));
 			
-			//	echo var_dump($st->fetchAll());
 			while ($user = $st->fetch()) {
 				$this->d = $user;
 				return true;
