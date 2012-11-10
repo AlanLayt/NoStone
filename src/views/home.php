@@ -1,7 +1,5 @@
 
-<div id="map_canvas" class="largeMap"></div>
-		  
-          
-<?php
-	if (isset($_GET)) echo var_dump($_GET);
-?>
+
+<div id="holder">
+	HOME PAGE HERE
+</div>

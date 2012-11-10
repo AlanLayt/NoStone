@@ -195,19 +195,21 @@
 		private $template;
 		public function __construct($app,$viewDetails) {
 			
-			$this->template = $this->viewroot.'/home.php';
+			$this->template = $this->viewroot.'/404.php';
 			
 			if(isset($_GET['view']))
 				$this->viewDetails = $viewDetails;
 				
 			$this->app = $app; 
-			//$this->viewDetails = $viewDetails;
+			
+		//	echo var_dump($viewDetails);
 			
 			debug("Loading View");
 		
 			if(isset($viewDetails['view'])) {
 				switch($viewDetails['view']) {
 					case 'post':
+						$this->post();
 						break;
 					case 'user':
 						$this->user();
@@ -243,6 +245,17 @@
 			debug("Loading home page.");
 		
 			$this->template = $this->viewroot.'/home.php';
+		} 
+		
+		public function post() { 
+			$this->postExists=false;
+			debug("Loading post page: ".$this->viewDetails['post']);
+			
+			$this->post = new PostHandler($this->app,$this->viewDetails['post']);
+			if($this->post->getDetails($this->viewDetails['post']))
+				$this->postExists=true;
+				
+			$this->template = $this->viewroot.'/post.php';
 		} 
 		
 		public function getTemplate() { 
@@ -310,6 +323,42 @@
 		
 		}  
 	
+	} 
+	
+	
+	
+	
+	class PostHandler { 
+	
+		public function __construct($app,$url) { 
+		//	$this->pdo = $pdo;
+		//	$this->root = $app->root;
+		
+			$this->app = $app;
+		}  
+
+		public function getDetails($id) { 
+			$st = $this->app->pdo->prepare('SELECT * FROM posts WHERE url = :url');
+			$st->execute(array(':url' => $id));
+			
+			debug("Getting post details");
+			while ($post = $st->fetch()) {
+				$this->d = $post;
+				return true;
+			}
+			return false;
+		} 
+	
+		public function getTitle() { 
+			return ''.$this->d['title'].'';
+		
+		} 
+	
+		public function getBody() { 
+			return ''.$this->d['body'].'';
+		
+		} 
+		
 	} 
 	
 	class User extends UserHandler{ 

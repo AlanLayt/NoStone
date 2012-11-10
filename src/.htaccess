@@ -1,3 +1,4 @@
 RewriteEngine On
 RewriteRule ^([^/\.]+)/([^/\.]+)/?$ index.php?view=$1&obj=$2 [L]
+RewriteRule ^([^/\.]+)/post/([^/\.]+)/?$ index.php?view=post&uid=$1&post=$2 [L]
 RewriteRule ^([^/\.]+)/?$ index.php?view=user&uid=$1 [L]

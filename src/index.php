@@ -28,7 +28,7 @@ $app = new App();
 
 <div id="header">
 	<?php
-	echo var_dump($_GET);
+	//echo var_dump($_GET);
     if($app->user->loggedIn()){
     
         echo '<div style="float:left;">' , $app->user->getAvatar('') , '</div>';
@@ -44,25 +44,20 @@ $app = new App();
         echo '<div class="login" style="float:right">' , $app->loginForm() , '</div>';
     ?>
 </div>
-<div id="holder">
+
+
 <?php
-/*
-if(isset($_GET['view']) && $_GET['view']=='user')
-	include_once 'views/profile.php';
-else
-    include_once 'views/add.php';
-	*/
-	
+
 	include_once $app->view->getTemplate();
+	
 ?>
-</div>
 
 
 <?php
 echo '
 
 
-<pre style="position:fixed;bottom:0;left:0;right:0;height: 150px; background:rgba(0,0,0,0.3); margin: 0px;">'.$GLOBALS['de'].'</pre>';
+<pre style="position:fixed;bottom:0;left:0;right:0;height: 150px; overflow:scroll; background:rgba(0,0,0,0.3); margin: 0px;">'.$GLOBALS['de'].'</pre>';
 ?>
 
 </body>
