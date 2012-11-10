@@ -1,5 +1,7 @@
 
 
 <div id="holder">
-	HOME PAGE HERE
+	<h2>HOME PAGE HERE</h2>
+    
+	<?php getTopPosts(); ?>
 </div>

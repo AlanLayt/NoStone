@@ -57,7 +57,7 @@ $app = new App();
 echo '
 
 
-<pre style="position:fixed;bottom:0;left:0;right:0;height: 150px; overflow:scroll; background:rgba(0,0,0,0.3); margin: 0px;">'.$GLOBALS['de'].'</pre>';
+<pre style="position:fixed;bottom:0;left:0;right:0;height: 150px; overflow-y:scroll; background:rgba(0,0,0,0.3); margin: 0px;">'.$GLOBALS['de'].'</pre>';
 ?>
 
 </body>

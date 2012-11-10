@@ -451,6 +451,18 @@
 	
 	
 	
+function getTopPosts() { 
+global $app;
+	$st = $app->pdo->prepare('SELECT * FROM posts,login WHERE posts.uid = login.uid');
+	$st->execute();
+	
+	while ($post = $st->fetch()) {
+		//$this->d = $user;
+		echo '<a href="'.$app->root.''.$post['uname'].'/post/'.$post['url'].'">'.$post['title'].'</a><br />';
+		//return true;
+	}
+	return false;
+} 
 	
 	
 	
