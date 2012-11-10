@@ -68,9 +68,19 @@ function initialize(){
 }
 
 
-window.addEvent('domready',function(){
-	
-	//initialize();
+
+
+
+
+ $(document).ready(function() {
+	 
+	initialize();
 	console.debug("Initialized");
 	
+	$('map_canvas').addEvent('click',function(c){
+		
+		this.toggleClass('largeMap');
+		this.toggleClass('smallMap');
+		
+	});
 });
