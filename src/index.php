@@ -6,6 +6,8 @@ $app = new App();
 ?><!doctype html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=320">
+    
     <title>NoStone</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCidhJakWqVYzhILIHg1ug18KPHXfjkkcE&sensor=true" type="text/javascript"></script>
     <!--<script src="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>-->
@@ -13,7 +15,12 @@ $app = new App();
 	<script src="<?php echo $root; ?>js/Stamen.js" type="text/javascript"></script>
     <script src="<?php echo $root; ?>js/main.js"></script>
     
+    <link rel="stylesheet" media="only screen and (max-width: 400px)" href="css/mobile.css" />
 	<link rel="stylesheet" href="<?php echo $root; ?>css/main.css">
+    
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="app-icon-64.png">
+    <link rel="icon" href="app-icon-64.png" sizes="32x32">
 </head>
 
 <body>
@@ -21,6 +28,7 @@ $app = new App();
 
 <div id="header">
 	<?php
+	echo var_dump($_GET);
     if($app->user->loggedIn()){
     
         echo '<div style="float:left;">' , $app->user->getAvatar('') , '</div>';
@@ -33,12 +41,19 @@ $app = new App();
     
     }
     else
-        echo '<div style="float:right">' , $app->loginForm() , '</div>';
+        echo '<div class="login" style="float:right">' , $app->loginForm() , '</div>';
     ?>
 </div>
 <div id="holder">
 <?php
+/*
+if(isset($_GET['view']) && $_GET['view']=='user')
+	include_once 'views/profile.php';
+else
     include_once 'views/add.php';
+	*/
+	
+	include_once $app->view->getTemplate();
 ?>
 </div>
 

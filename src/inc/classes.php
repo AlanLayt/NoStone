@@ -1,7 +1,7 @@
 <?php
 
 	class App {
-		private $root = 'http://127.0.0.1/Projects/git/NoStone/src/';
+		public $root = 'http://127.0.0.1/Projects/git/NoStone/src/';
 		
 		public function __construct(){
 			$uname = 'alan';
@@ -54,12 +54,25 @@
 						break;
 				}
 			}
+			if(!$this->user->loggedIn())
+				$this->loaded();
 		
 		} 
 	
 		public function authenticated() { 
 		
 			debug("Authenticated. Running.");
+			$this->loaded();
+		
+		}
+	
+		public function loaded() { 
+		
+			debug("Loaded. Running.");
+		//	if(isset($_GET['view'])){
+				$viewDetails = $_GET;
+				$this->view = new View($this,$viewDetails);
+		//	}
 		
 		}
 	
@@ -174,16 +187,140 @@
 	
 	} 
 	
-	class User { 
 	
-		private static $instance; 
-		private $authed = false;
-		private $pwSalt = 'hogwaRts';
+	
+	
+	class View { 
+		private $viewroot='views';
+		private $template;
+		public function __construct($app,$viewDetails) {
+			
+			$this->template = $this->viewroot.'/home.php';
+			
+			if(isset($_GET['view']))
+				$this->viewDetails = $viewDetails;
+				
+			$this->app = $app; 
+			//$this->viewDetails = $viewDetails;
+			
+			debug("Loading View");
 		
+			if(isset($viewDetails['view'])) {
+				switch($viewDetails['view']) {
+					case 'post':
+						break;
+					case 'user':
+						$this->user();
+						break;
+					default:
+					$this->home();
+						break;
+				}
+			}
+			else
+				$this->home();
+			
+		}  
+		
+		public function user() {
+			$this->userExists=false;
+			if(isset($this->viewDetails['uid']))
+				$user = $this->viewDetails['uid'];
+			else
+				$user = $this->viewDetails['uid'];
+			
+			debug("Loading user profile.");
+			
+			$this->user = new UserHandler($this->app->pdo,$this->app->root);
+			if($this->user->getDetails($user))
+				$this->userExists=true;
+				
+			$this->template = $this->viewroot.'/profile.php';
+		}
+		
+		public function home() { 
+		
+			debug("Loading home page.");
+		
+			$this->template = $this->viewroot.'/home.php';
+		} 
+		
+		public function getTemplate() { 
+		
+			return $this->template;
+		
+		} 
+		
+	}
+	
+	
+	
+	
+	
+	class UserHandler { 
+	
 		public function __construct($pdo,$root) { 
 			$this->pdo = $pdo;
 			$this->root = $root;
 		}  
+		
+		public function setDetails($user) { 
+				$this->d = $user;
+		} 
+
+
+		public function getDetails($uname) { 
+			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username');
+			$st->execute(array(':username' => $uname));
+			
+			while ($user = $st->fetch()) {
+				$this->d = $user;
+				return true;
+			}
+			return false;
+		} 
+		
+		public function getAvatar($class) { 
+			$params = '';
+			if($class!='')
+				$params .= 'class="'.$class.'" ';
+			
+			
+			return '<img '.$params.'src="'.$this->root.'avatar/'.$this->d['uid'].'.jpg" \>';
+		
+		} 
+	
+		public function getId() { 
+			return '<span class="username">'.$this->d['uid'].'</span>';
+		
+		} 
+	
+		public function getUsername() { 
+			return '<span class="username">'.$this->d['uname'].'</span>';
+		
+		} 
+	
+		public function getFirstName() { 
+			return '<span class="firstname">'.$this->d['first_name'].'</span>';
+		
+		}
+	
+		public function getLastName() { 
+			return '<span class="lastname">'.$this->d['last_name'].'</span>';
+		
+		}  
+	
+	} 
+	
+	class User extends UserHandler{ 
+		private static $instance; 
+		private $authed = false;
+		private $pwSalt = 'hogwaRts';
+		
+		/*public function __construct($pdo,$root) { 
+			$this->pdo = $pdo;
+			$this->root = $root;
+		} */ 
 		
 		public function authed($is,$key) { 
 			$this->authed = $is;
@@ -260,61 +397,20 @@
 				return false;
 		}
 		
-		
-		
-		
-		
-		public function setDetails($user) { 
-				$this->d = $user;
-		} 
-		
-		
-		
-		
-		
-		
-		public function getDetails($uname) { 
-			$st = $this->pdo->prepare('SELECT * FROM login WHERE uname = :username');
-			$st->execute(array(':username' => $uname));
-			
-			while ($user = $st->fetch()) {
-				$this->d = $user;
-				return true;
-			}
-		} 
-		
-		public function getAvatar($class) { 
-			$params = '';
-			if($class!='')
-				$params .= 'class="'.$class.'" ';
-			
-			
-			return '<img '.$params.'src="'.$this->root.'avatar/'.$this->d['uid'].'.jpg" \>';
-		
-		} 
-	
-		public function getUsername() { 
-			return '<span class="username">'.$this->d['uname'].'</span>';
-		
-		} 
-	
-		public function getFirstName() { 
-			return '<span class="firstname">'.$this->d['first_name'].'</span>';
-		
-		}
-	
-		public function getLastName() { 
-			return '<span class="lastname">'.$this->d['last_name'].'</span>';
-		
-		}  
 	
 	} 
 	
-	$GLOBALS['de'] = '';
-	function debug($t){	
 	
-		$GLOBALS['de'] .= $t.'<br/>';
-		
-	}
+	
+	
+	
+	
+	
+	
+	
+$GLOBALS['de'] = '';
+function debug($t){	
+	$GLOBALS['de'] .= $t.'<br/>';
+}
 
 ?>

@@ -1,2 +1,3 @@
 RewriteEngine On
-RewriteRule ^user/([^/\.]+)/?$ index.php?id=$1 [L]
+RewriteRule ^([^/\.]+)/([^/\.]+)/?$ index.php?view=$1&obj=$2 [L]
+RewriteRule ^([^/\.]+)/?$ index.php?view=user&uid=$1 [L]
