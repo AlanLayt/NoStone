@@ -291,6 +291,18 @@
 				return true;
 			}
 			return false;
+		}
+
+		public function getPosts() { 
+			$st = $this->pdo->prepare('SELECT * FROM posts WHERE uid = :uid');
+			$st->execute(array(':uid' => $this->d['uid']));
+			
+			while ($post = $st->fetch()) {
+				echo '<a href="'.$this->root.''.$this->d['uname'].'/post/'.$post['url'].'">'.$post['title'].'</a><br />';
+				//$this->d = $user;
+				//return true;
+			}
+			return false;
 		} 
 		
 		public function getAvatar($class) { 

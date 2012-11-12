@@ -20,7 +20,7 @@ $app = new App();
     
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="app-icon-64.png">
-    <link rel="icon" href="app-icon-64.png" sizes="32x32">
+    <link rel="icon" href="app-icon-64.png" sizes="64x64">
 </head>
 
 <body>
@@ -45,11 +45,10 @@ $app = new App();
     ?>
 </div>
 
-
 <?php
 
 	include_once $app->view->getTemplate();
-	
+	echo $app->registerForm();
 ?>
 
 

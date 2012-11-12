@@ -19,6 +19,14 @@ body {
 	background: #D6D6D6;
 	//border-bottom: 1px solid #999;
 }
+#navihead{
+	text-align:center;
+	margin: 110px auto 70px auto;	
+}
+.menuItem {
+	padding:30px;
+}
+
 #header img{
 	margin-right: 10px;
 	border-radius:3px;

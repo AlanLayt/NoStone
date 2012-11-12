@@ -6,7 +6,12 @@ if($app->view->userExists):
 	<?php echo $app->view->user->getAvatar(''); ?>
     
     User <?php echo $app->view->user->getUsername(); ?>'s profile.
-
+    
+    
+    <p>
+        Posts:<br/>
+        <?php echo $app->view->user->getPosts(); ?>
+	</p>
 <?php
 else:
 ?>
