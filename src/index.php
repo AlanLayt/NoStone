@@ -1,4 +1,5 @@
 <?php
+
 $root = 'http://127.0.0.1/Projects/git/NoStone/src/';
 include_once('inc/classes.php');
 $app = new App();
@@ -12,6 +13,7 @@ $app = new App();
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCidhJakWqVYzhILIHg1ug18KPHXfjkkcE&sensor=true" type="text/javascript"></script>
     <!--<script src="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script src="<?php echo $root; ?>js/richmarker-compiled.js"></script>
 	<script src="<?php echo $root; ?>js/Stamen.js" type="text/javascript"></script>
     <script src="<?php echo $root; ?>js/main.js"></script>
     
@@ -48,7 +50,7 @@ $app = new App();
 <?php
 
 	include_once $app->view->getTemplate();
-	echo $app->registerForm();
+	//echo $app->registerForm();
 ?>
 
 

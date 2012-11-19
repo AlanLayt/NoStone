@@ -34,35 +34,33 @@ function initGeomap(init){
 
 function initialize(){
 	initGeomap(function(){
-		images = new Array(
-			{	
-				img:"1.jpg",
-				thumb:"1.jpg",
-				pos: new google.maps.LatLng(56.46023203069261,-2.965253463818385)
-			}
-			);
+		marker = {};
+		
+		console.debug(window.map);
+		coords = $('#postMarker').attr('rel').split(',');
+		
+		if($('#postMarker')){
+			markerEl = $('#postMarker').clone();
+		console.debug(markerEl);
+			markerEl = markerEl.removeClass('markerholdhidden').get(0);
 			
-		images.each(function(c){
-			console.debug(c.pos);
-			var marker = new google.maps.Marker({
-				position: c.pos,
-				map: map,
-				title: 'Click to zoom',
-				imagesrc: c.img
-			});
-			//marker.setIcon(new google.maps.MarkerImage(c.img,new google.maps.Size(50,50)));
-			google.maps.event.addListener(marker, 'click', function(e) {
-				$('content').set('html','<img src="'+marker.imagesrc+'">');
-			});
-		});
+			marker.obj = new RichMarker({
+			  position: new google.maps.LatLng(coords[0],coords[1]),//e.latLng,
+			  map: window.map,
+			  draggable: false,
+			  flat:true,
+			  content: markerEl
+			  });
+		}
+		
 		
 		console.debug("Init");
 		
-		google.maps.event.addListener(map, 'click', function(e) {
+		/*google.maps.event.addListener(map, 'click', function(e) {
 			console.debug(e);
 			console.debug(""+e.latLng.Ya+","+e.latLng.Za);
 			
-		});
+		});*/
 	
 	});
 }
@@ -77,10 +75,10 @@ function initialize(){
 	initialize();
 	console.debug("Initialized");
 	
-	$('map_canvas').addEvent('click',function(c){
+	/*$('map_canvas').addEvent('click',function(c){
 		
 		this.toggleClass('largeMap');
 		this.toggleClass('smallMap');
 		
-	});
+	});*/
 });

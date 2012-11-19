@@ -211,6 +211,9 @@
 					case 'post':
 						$this->post();
 						break;
+					case 'addPost':
+						$this->addPost();
+						break;
 					case 'user':
 						$this->user();
 						break;
@@ -239,6 +242,13 @@
 				
 			$this->template = $this->viewroot.'/profile.php';
 		}
+		
+		public function addPost() { 
+		
+			debug("Loading add post page.");
+		
+			$this->template = $this->viewroot.'/add.php';
+		} 
 		
 		public function home() { 
 		
@@ -368,6 +378,16 @@
 	
 		public function getBody() { 
 			return ''.$this->d['body'].'';
+		
+		} 
+	
+		public function getLat() { 
+			return ''.$this->d['lat'].'';
+		
+		} 
+	
+		public function getLon() { 
+			return ''.$this->d['lon'].'';
 		
 		} 
 		
