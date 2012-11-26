@@ -1,84 +1,124 @@
-window.map;
-function makeMap(lat,long){
-	var layer = "watercolor";
-	window.map = new google.maps.Map(document.getElementById("map_canvas"), {
-		center: new google.maps.LatLng(lat,long),
-		zoom: 12,
-		mapTypeId: layer,
-		mapTypeControlOptions: {
-			mapTypeIds: [layer]
-		}
-	});
-	map.mapTypes.set(layer, new google.maps.StamenMapType(layer));
-	
-}
-function initGeomap(init){
-  
-	navigator.geolocation.getCurrentPosition(foundLocation, noLocation);
-
-	function foundLocation(position)
-	{
-		var lat = position.coords.latitude;
-		var long = position.coords.longitude;
-		makeMap(lat,long);
-		init(map);
-	}
-	function noLocation(position)
-	{
-		
-	}
-
-}
-
-
-
-function initialize(){
-	initGeomap(function(){
-		marker = {};
-		
-		console.debug(window.map);
-		coords = $('#postMarker').attr('rel').split(',');
-		
-		if($('#postMarker')){
-			markerEl = $('#postMarker').clone();
-		console.debug(markerEl);
-			markerEl = markerEl.removeClass('markerholdhidden').get(0);
+var Map = function(){}
+Map.prototype = {
+	init : function(){
+		var self = this;
+		var holder = $('#map_canvas').get(0);
+		if($('#map_canvas').get(0)){
+			var map = this.makeMap(holder,0,0);
 			
-			marker.obj = new RichMarker({
-			  position: new google.maps.LatLng(coords[0],coords[1]),//e.latLng,
-			  map: window.map,
-			  draggable: false,
-			  flat:true,
-			  content: markerEl
-			  });
-		}
-		
-		
-		console.debug("Init");
-		
-		/*google.maps.event.addListener(map, 'click', function(e) {
-			console.debug(e);
-			console.debug(""+e.latLng.Ya+","+e.latLng.Za);
+			this.getUserLocation(self.loc);
 			
-		});*/
+			document.addEventListener("locationRetrieved", function(e){
+				e.detail.self.loc = e.detail.loc;
+			},false);
+			
+			if(!$('#postMarker').get(0))
+				document.addEventListener("locationRetrieved", function(e){
+					map.setCenter(e.detail.loc);
+				}, false);
+			this.createMarkers();
+			
+			console.debug("Map Initialized");
+		}
+	},
+	getUserLocation : function(loc){
+		var event = new CustomEvent(
+			"locationRetrieved",
+			{
+				detail: {
+					loc: loc,
+					self: this,
+				},
+				bubbles: true,
+				cancelable: true
+			}
+		);
+		
+		navigator.geolocation.getCurrentPosition(
+			function foundLocation(position)
+			{
+				var lat = position.coords.latitude;
+				var lon = position.coords.longitude;
+				loc = new google.maps.LatLng(lat, lon);
+				event.detail.loc = loc;
+				document.dispatchEvent(event);  
+			},
+			function noLocation(position)
+			{
+			}
+		);
+	},
+	makeMap : function(holder,lat,long){
+		var self = this;
+		var layer = "watercolor";
+		
+		this.map = new google.maps.Map(holder, {
+			center: new google.maps.LatLng(lat,long),
+			zoom: 14,//14
+			mapTypeId: layer,
+			mapTypeControlOptions: {
+				mapTypeIds: [layer]
+			}
+		});
+		this.map.mapTypes.set(layer, new google.maps.StamenMapType(layer));
+		return this.map;
+	},
+	createMarkers : function(map){
+		var self = this;
+		
+		if($('#postMarker').get(0))
+				self.markerFromEl($('#postMarker'));
+		else 
+			$('.iconMarker').each(function(index, element) {
+				self.markerFromEl($(element));
+			});
+			
+	},
+	markerFromEl : function(el){
+		var self = this;
+		
+		coords = el.attr('rel').split(',');
+		markerEl = el.clone().removeClass('markerholdhidden').get(0);
+		self.addMarker(coords[0],coords[1],markerEl);
+		self.map.setCenter(new google.maps.LatLng(coords[0],coords[1]));
+		
+		
+		document.addEventListener("locationRetrieved", function(e){
+		//	console.debug(e.detail.loc);
+		//	console.debug(self);
+			
+			console.debug(
+			);
+			var dist = 
+				google.maps.geometry.spherical.computeDistanceBetween (
+					e.detail.loc, 
+					new google.maps.LatLng(coords[0],coords[1])
+				);
+			$("#distance").text((dist/1000).toFixed(2) + "km");
+		}, false);
+		
+	},
+	addMarker : function(lat,lon,content){
+		this.marker = {};
+		this.marker.obj = new RichMarker({
+		  position: new google.maps.LatLng(lat,lon),
+		  map: this.map,
+		  draggable: false,
+		  flat:true,
+		  content: content
+		});
+	}
+};
+			
+
+
+
+
+
+var map = new Map();
+
+$(document).ready(function() {
+	map.init();
 	
-	});
-}
-
-
-
-
-
-
- $(document).ready(function() {
-	 
-	initialize();
 	console.debug("Initialized");
-	
-	/*$('map_canvas').addEvent('click',function(c){
-		
-		this.toggleClass('largeMap');
-		this.toggleClass('smallMap');
-		
-	});*/
 });

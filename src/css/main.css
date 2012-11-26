@@ -1,23 +1,14 @@
 @charset "utf-8";
 /* CSS Document */
 
-body {
-	font-family: "Segoe UI", Frutiger, "Frutiger Linotype";
-	//font-family: StRyde;
-	margin-top: 70px;
-	background-image:url('bg.png');
-}
-
 #header {
 	position:absolute;
 	top:0;
 	left:0;
 	right:0;
-	//height: 50px;
 	padding: 5px;
 	background:#E8E8E8;
 	background: #D6D6D6;
-	//border-bottom: 1px solid #999;
 }
 #navihead{
 	text-align:center;
@@ -32,38 +23,54 @@ body {
 	border-radius:3px;
 }
 #holder {
-	width: 850px;
-	margin: 0 auto;
-	background:#ccc;
-	padding: 10px;
 	overflow: auto;
 }
 #map_canvas {
-	border: 1px solid #333;
 	-webkit-transition: all 0.5s ease-out;
 	float:right;
-	//border-width: 1px 0 1px 0;
 }
 .largeMap {
 	width: 850px;
-	height: 400px;
+	height: 300px;
+	display:none;
 }
 .smallMap {
-	width: 350px;
-	height: 200px;
+	width: 390px;
+	height: 260px;
+}
+
+.markerholdhidden{
+	visibility:hidden;
+	display:none;
 }
 
 
 
-
-
+ul.topBar a {
+	color: #3d3531;
+	//float: left;
+	padding: 5px 10px 5px 10px;
+	text-decoration: none;
+	-o-transition: .5s;
+	-ms-transition: .5s;
+	-moz-transition: .5s;
+	-webkit-transition: .5s;
+	transition: .5s;
+}
+ul.topBar a:active {
+	color: #363636;
+}
+ul.topBar a:hover {
+	color: #519651;
+	cursor: pointer;
+	text-decoration: underline;
+}
 .logout {
 	font-size:12px;
 	text-decoration:none;
 }
 
 .username {
-	//text-transform:capitalize;
 	color:#999;
 }
 
@@ -71,4 +78,215 @@ body {
 }
 
 .lastname {
+}
+
+
+
+#postTitle {
+    font-size:30px;
+	margin: 0 20px 0px 0;
+	padding: 0 0 0 20px;
+	font-weight:100;
+	width: 460px;
+}
+
+#holder {
+	padding:0;
+	//background:#fff;
+	text-align:left;
+}
+
+#postContent {
+    float:left;
+    width: 390px;
+}
+
+#postBody {
+	width: 350px;
+	height: 400px;
+	max-width: 350px;
+	min-height:100px;
+	//margin-right: 20px;
+	padding: 10px;
+	font-size:11px;
+}
+
+#postURLHold{
+	width: 360px;
+	color:#999;
+	padding: 0 0 0 10px;
+	margin: 0 20px 20px 0;
+}
+#postURL{
+	width: 120px;
+    font-size:12px;
+	padding: 0;
+	font-weight:100;
+	color:#999;
+	background:none;
+	border:none;
+}
+#postURL:Focus{
+	outline: none;
+}
+
+#postURLHold, #postTitle, #postBody {
+	border:none;
+	border-left: 10px solid rgba(0,0,0,0.1);
+	background:none;
+	font-family:Arial, Helvetica, sans-serif;
+}
+#postBody:Focus, #postTitle:Focus {
+	outline: 1px solid #666;
+}
+
+#rightHolder {
+	width: 390px;
+    float:left;
+}
+
+.mapHolder {
+    width: 390px;
+    height:260px;
+    background:#333;
+}
+
+.iconMarker {
+	padding: 3px;
+}
+
+#galleryHolder {
+    width: 360px;
+    padding: 20px 10px 20px 10px;
+    text-align:center;
+    color:#999;
+    margin: 10px 0 10px 0;
+    border:5px dashed rgba(0,0,0,0.1);
+    cursor: pointer;
+    position:relative;
+}
+#galleryHolder:Hover {
+    color:#666;
+    border:5px dashed rgba(0,0,0,0.2);
+}
+#galleryHolderImgs{
+    margin-top:0px;
+}
+
+.galleryImg {
+    max-width: 100px;
+}
+
+#fileup {
+    width:230px;
+    text-align:center;
+    color:#999;
+    border:5px dashed rgba(0,0,0,0.1);
+    cursor: pointer;
+    background: #333;
+    opacity:0;
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+}
+#editBarHold {
+	clear:both;
+	padding-top:20px;
+}
+#editBar {
+	border-top: 2px solid #ccc;
+	padding: 20px 50px 10px 50px;
+	//background: #333;
+}
+
+.publish {
+	padding: 5px 20px 5px 20px;
+	background: #E5E5E5;
+	border: 1px solid #858585;
+	float:left;
+	width: 100%;
+	cursor:pointer;
+}
+.button:Hover {
+	background:#CACACA;
+}
+
+form select option {
+	background: #fff;
+	padding: 20px;
+	height: 20px;
+}
+
+
+
+
+.tzSelect{
+
+	/* This is the container of the new select element */
+
+	height:24px;
+	display:inline-block;
+	min-width:180px;
+	position:relative;
+	text-align:center;
+	
+}
+
+.tzSelect .selectBox{
+	position:absolute;
+
+	height:100%;
+	width:100%;
+
+	/* Font settings */
+	color:#666666;
+
+	/* Using CSS3 multiple backgrounds and a fallback */
+
+	background-repeat: no-repeat, no-repeat, no-repeat, repeat-x;
+
+	cursor:pointer;
+	padding: 2px;
+	background: #D6D6D6;
+
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+	color: #3d3531;
+	-o-transition: .5s;
+	-ms-transition: .5s;
+	-moz-transition: .5s;
+	-webkit-transition: .5s;
+	transition: .5s;
+}
+
+.tzSelect .selectBox:hover,
+.tzSelect .selectBox.expanded{
+	//background-position:0 -170px, right -238px, 50% -102px, 0 -34px;
+	//color:#2c5667;
+	//text-shadow:1px 1px 0 #9bc2d0;
+	color: #519651;
+}
+
+.tzSelect ul {
+	padding-top: 40px;
+	list-style: none;
+	padding-left: 5px;
+	text-align:left;
+}
+.tzSelect ul li{
+	border-left: 5px solid #333;
+	background: #D6D6D6;
+	background: #D6D6D6;
+	padding: 2px 5px 2px 5px;
+	cursor:pointer;
+}
+.tzSelect ul li:Hover{
+	background: #EBECED;
+}
+
+
+.flash {
 }
